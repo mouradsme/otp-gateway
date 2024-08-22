@@ -28,6 +28,37 @@ curl -X POST https://your-domain.com/api/otp/generate \
 -d '{"phone": "0555555555"}'
 ```
 
+**Success Response**
+```json
+{
+    "message": "OTP_SENT"
+}
+```
+- Description: This response indicates that the OTP was successfully generated and sent to the provided phone number.
+
+**Validation Error Response**
+```json
+{
+    "message": "VALIDATION_ERROR",
+    "status": "error",
+    "errors": {
+        "phone": [
+            "The phone format is invalid."
+        ]
+    }
+}
+```
+- Description: This response indicates that the request failed validation. The errors field contains details about why the phone number is invalid. Adjust the validation error messages based on your specific requirements.
+
+**Rate Limit Exceeded Response**
+```json
+{
+    "message": "RATE_LIMIT_EXCEEDED"
+}
+```
+- Description: This response indicates that the rate limit for OTP requests has been exceeded. The client should wait before making another request.
+
+
 ### Verify OTP
 **Endpoint**: `POST /api/otp/verify`
 
@@ -44,4 +75,45 @@ curl -X POST https://your-domain.com/api/otp/verify \
 -H "Content-Type: application/json" \
 -d '{"phone": 0555555555", "otp": "1234"}'
 ```
+
+**Success Response**
+```json
+{
+    "message": "OTP_VERIFIED"
+}
+```
+- Description: This response indicates that the provided OTP was successfully verified, and the OTP record has been deleted from the database.
+
+**Validation Error**
+```json
+{
+    "message": "VALIDATION_ERROR",
+    "status": "error",
+    "errors": {
+        "phone": [
+            "The phone format is invalid."
+        ],
+        "otp": [
+            "The OTP must be exactly 4 digits."
+        ]
+    }
+}
+```
+- Description: This response indicates that the request failed validation. The errors field provides details about which parameters failed validation.
+
+**Invalid OTP Response**
+```json
+{
+    "message": "INVALID_INPUT"
+}
+```
+-Description: This response indicates that the OTP verification failed because no OTP record was found for the provided phone number.
+
+**Invalid or Expired OTP Response**
+```json
+{
+    "message": "INVALID_OR_EXPIRED"
+}
+```
+- Description: This response indicates that the OTP provided does not match the stored OTP or the OTP has expired. The client should request a new OTP if needed.
 
